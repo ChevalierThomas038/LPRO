@@ -1,3 +1,15 @@
 {% extends 'blog/blog.html.twig' %}
 
-{% block h1 %}<h1>Nouveau titre !</h1>{% endblock %}
+{% block h1 %}<h1>Article {{ id.id }}</h1>{% endblock %}
+
+{% block content_blog %}
+
+    {% for msg in app.session.flashBag.get('info') %}
+        <p>{{ msg }}</p></br>
+    {% endfor %}
+
+    <a>{{ id.contenue }}</a></br>
+    <button type="button" onclick="location.href = '{{ path('app_blog_delete') }}';">Supprimer</button>
+    <button type="button" onclick="location.href = '{{ url('app_blog_edit', {'id': id.id}) }}';">Modifier</button>
+    </br>
+{% endblock %}

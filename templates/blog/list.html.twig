@@ -1,5 +1,16 @@
 {% extends 'blog/blog.html.twig' %}
 {% block content_blog %}
 
-    <a>Article</a></br>
+    {% for msg in app.session.flashBag.get('info') %}
+        <p>{{ msg }}</p></br>
+    {% endfor %}
+
+{% if(article|length > 0) %}
+    <ul>
+        {% for article in article %}
+        {% set id = article.id %}
+            <li><a href="{{ url('app_blog_article', {'id': id}) }}">{{ article.article }} </a> : {{ article.contenue | truncate(20)}}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 {% endblock %}
