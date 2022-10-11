@@ -12,32 +12,29 @@ class BlogController extends AbstractController
     #[Route('/', name: 'index')]
     public function blogAction(): Response
     {
-        return $this->render('blog/base.html.twig');
+        return $this->render('blog/blog.html.twig');
     }
 
     #[Route('/list/{page}', name: 'list',requirements: ['page' => '\d+'], defaults: ['page' => '1'])]
     public function listAction(int $page): Response
     {
-        return new Response("<body>$page</body>");
+        return $this->render('blog/list.html.twig');
     }
 
     #[Route('/article/{id}', name: 'article',requirements: ['id' => '\d+'])]
     public function viewAction(int $id): Response
     {
-        return new Response("<body>$id</body>");
+        return $this->render('blog/view.html.twig');
     }
 
-    #[Route('/article/add', name: 'list_add')]
+    #[Route('/article/add', name: 'add')]
     public function addAction(): Response
     {
         if(true) {
-            // Traitement du formulaire...
-
-            // Message de succès
             $this->addFlash('info', "Le message flash");
             return $this->redirectToRoute('app_blog_list', ['page'=>'1']);
         }
-        return $this->render('');
+        return $this->render('blog/blog.html.twig');
     }
 
     #[Route('/article/edit/{id}', name: 'edit',requirements: ['id' => '\d+'], defaults: ['id' => '1'])]
