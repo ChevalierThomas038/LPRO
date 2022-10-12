@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,21 +22,34 @@ class BlogController extends AbstractController
     #[Route('/list/{page}', name: 'list',requirements: ['page' => '\d+'], defaults: ['page' => '1'])]
     public function listAction(int $page,  EntityManagerInterface $em): Response
     {
+        // Ajout article
         /*$A = new Article();
         $A -> setAuthor('ThomasC')
             -> setContent('Ceci est du texet')
-            ->setCreateAt(new \DateTime('2022-09-01 12:00:00'))
+            ->setCreateAt(new \DateTime('2022-02-01 12:00:00'))
             -> setNbViews('1')
             -> setPublished(true)
-            -> setTitle('Titre 0')
-            -> setUpdateAt(new \DateTime('2022-09-01 13:00:00'));
+            -> setTitle('RE Titre 5')
+            -> setUpdateAt(new \DateTime('2022-02-01 13:00:00'));
 
         $em -> persist($A);
         $em->flush();*/
 
-        $Articles = $em->getRepository(Article::class)->findBy(['published' => true], ['createAt' => 'desc']);
+        // Ajout comment
+        /*$A = new Comment();
+        $A ->setArticle($em->getRepository(Article::class)->find(8))
+            ->setTitle('Avis')
+            ->setAuthor('Moi')
+            ->setCreateAt(new \DateTime('2022-12-12 12:00:00'))
+            ->setMessage('Ceci est un message');
 
-        $this->getParameter('nb_article');
+        $em -> persist($A);
+        $em->flush();*/
+
+
+        $Articles = $em->getRepository(Article::class)//->findBy(['published' => true], ['createAt' => 'desc'])
+            ->pagination($page, $this->getParameter('nb_article'));
+
         return $this->render('blog/list.html.twig', ['article' => $Articles]);
     }
 
@@ -77,6 +91,12 @@ class BlogController extends AbstractController
     public function deleteAction(int $id, EntityManagerInterface $em): Response
     {
         $Articles = $em->getRepository(Article::class)->find($id);
+
+        if (!$Articles)
+        {
+            throw new NotFoundHttpException();
+        }
+
         $em->remove($Articles);
         $em->flush();
 

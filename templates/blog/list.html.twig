@@ -5,12 +5,27 @@
         <p>{{ msg }}</p></br>
     {% endfor %}
 
-{% if(article|length > 0) %}
-    <ul>
-        {% for article in article %}
-        {% set id = article.id %}
-            <li><a href="{{ url('app_blog_article', {'id': id}) }}">{{ article.title }} </a> : {{ article.content | truncate(20)}}</li>
+    {% if(article|length > 0) %}
+        <ul>
+            {% for article in article %}
+                {% set id = article.id %}
+                <li><a href="{{ url('app_blog_article', {'id': id}) }}">{{ article.title }} </a> : {{ article.content | truncate(20)}}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% block comment %}
+        {% for comment in comment %}
+            <li><a>{{ comment.title }}</li>
         {% endfor %}
-    </ul>
-{% endif %}
+    {% endblock %}
+
+    {% if(article.count > 5) %}
+        {% set nbPage = article.count/5 %}
+            {% for i in 0..nbPage %}
+                <a href="{{ url('app_blog_list', {'page': (i+1)}) }}">{{ i+1 }}</a>
+            {% endfor %}
+        </br>
+    {% endif %}
+
 {% endblock %}
