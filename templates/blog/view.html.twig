@@ -1,6 +1,6 @@
 {% extends 'blog/blog.html.twig' %}
 
-{% block h1 %}<h1>Article {{ id.id }}</h1>{% endblock %}
+{% block h1 %}<h1>{{ article.title }}</h1>{% endblock %}
 
 {% block content_blog %}
 
@@ -8,8 +8,8 @@
         <p>{{ msg }}</p></br>
     {% endfor %}
 
-    <a>{{ id.contenue }}</a></br>
-    <button type="button" onclick="location.href = '{{ path('app_blog_delete') }}';">Supprimer</button>
-    <button type="button" onclick="location.href = '{{ url('app_blog_edit', {'id': id.id}) }}';">Modifier</button>
+    <a>{{ article.content }}</a></br>
+    <button type="button" onclick="location.href = '{{ url('app_blog_delete', {'id': article.id}) }}';">Supprimer</button>
+    <button type="button" onclick="location.href = '{{ url('app_blog_edit', {'id': article.id}) }}';">Modifier</button>
     </br>
 {% endblock %}

@@ -9,7 +9,7 @@
     <ul>
         {% for article in article %}
         {% set id = article.id %}
-            <li><a href="{{ url('app_blog_article', {'id': id}) }}">{{ article.article }} </a> : {{ article.contenue | truncate(20)}}</li>
+            <li><a href="{{ url('app_blog_article', {'id': id}) }}">{{ article.title }} </a> : {{ article.content | truncate(20)}}</li>
         {% endfor %}
     </ul>
 {% endif %}

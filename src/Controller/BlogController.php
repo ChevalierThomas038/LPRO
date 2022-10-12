@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/blog', name: 'app_blog_')]
@@ -16,26 +19,41 @@ class BlogController extends AbstractController
     }
 
     #[Route('/list/{page}', name: 'list',requirements: ['page' => '\d+'], defaults: ['page' => '1'])]
-    public function listAction(int $page): Response
+    public function listAction(int $page,  EntityManagerInterface $em): Response
     {
-        $Articles = [];
+        /*$A = new Article();
+        $A -> setAuthor('ThomasC')
+            -> setContent('Ceci est du texet')
+            ->setCreateAt(new \DateTime('2022-09-01 12:00:00'))
+            -> setNbViews('1')
+            -> setPublished(true)
+            -> setTitle('Titre 0')
+            -> setUpdateAt(new \DateTime('2022-09-01 13:00:00'));
 
-        for($i=1 ; $i < 5; $i++) {
-            $Articles[] = ['id' => $i, 'article' => 'Article' . strval($i), 'contenue' => 'Ceci est un texte assez
-            long avec lequel nous allons tester notre
-            filtre'];
-        }
+        $em -> persist($A);
+        $em->flush();*/
 
+        $Articles = $em->getRepository(Article::class)->findBy(['published' => true], ['createAt' => 'desc']);
+
+        $this->getParameter('nb_article');
         return $this->render('blog/list.html.twig', ['article' => $Articles]);
     }
 
     #[Route('/article/{id}', name: 'article',requirements: ['id' => '\d+'])]
-    public function viewAction(int $id): Response
+    public function viewAction(int $id,  EntityManagerInterface $em): Response
     {
+        $Articles = $em->getRepository(Article::class)->find($id);
+        /*
         $tabId = ['id' => $id, 'contenue' => 'Ceci est un texte assez
         long avec lequel nous allons tester notre
-        filtre'];
-        return $this->render('blog/view.html.twig', ['id' => $tabId]);
+        filtre'];*/
+
+        if (!$Articles->isPublished())
+        {
+            throw new NotFoundHttpException();
+        }
+
+        return $this->render('blog/view.html.twig', ['article' => $Articles]);
     }
 
     #[Route('/article/add', name: 'add')]
@@ -56,9 +74,13 @@ class BlogController extends AbstractController
     }
 
     #[Route('/article/delete/{id}', name: 'delete',requirements: ['id' => '\d+'], defaults: ['id' => '1'])]
-    public function deleteAction(int $id): Response
+    public function deleteAction(int $id, EntityManagerInterface $em): Response
     {
-        $this->addFlash('info', "Le message est supprimer");
+        $Articles = $em->getRepository(Article::class)->find($id);
+        $em->remove($Articles);
+        $em->flush();
+
+        $this->addFlash('info', "L'article est supprimer");
         return $this->redirectToRoute('app_blog_list');
     }
 
