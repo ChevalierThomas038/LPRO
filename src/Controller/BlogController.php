@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Article;
-use App\Entity\Comment;
+use App\Form\ArticleType;
+use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -50,7 +53,11 @@ class BlogController extends AbstractController
         $Articles = $em->getRepository(Article::class)//->findBy(['published' => true], ['createAt' => 'desc'])
             ->pagination($page, $this->getParameter('nb_article'));
 
-        return $this->render('blog/list.html.twig', ['article' => $Articles]);
+        dump($Articles);
+
+        //return $this->render('blog/list.html.twig', ['article' => $Articles]);
+        return new Response('<body></body>');
+
     }
 
     #[Route('/article/{id}', name: 'article',requirements: ['id' => '\d+'])]
@@ -71,20 +78,50 @@ class BlogController extends AbstractController
     }
 
     #[Route('/article/add', name: 'add')]
-    public function addAction(): Response
+    public function addAction(Request $request): Response
     {
+        $tire = new Article();
+        $form = $this->createForm(ArticleType::class, $tire);
+        $form->add('send', SubmitType::class, ['label' => 'Nouveau article']);
+        $form->handleRequest($request); // Alimentation du formulaire avec la Request
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Le formulaire vient d'être soumis et il est valide => $tire est hydraté avec les données saisies
+
+            // Traitement des données du formulaire...
+
+            return $this->redirectToRoute('app_blog_list');
+        }
+
+        // Affichage du formulaire initial (requête GET) OU affichage du formulaire avec erreurs après validation (requête POST)
+        return $this->render('blog/forum.html.twig', ['form' => $form->createView()]);
+
+        /*
         if(true) {
             $this->addFlash('info', "Article ajouter");
             return $this->redirectToRoute('app_blog_list', ['page'=>'1']);
         }
-        return $this->render('blog/blog.html.twig');
+        return $this->render('blog/blog.html.twig');*/
     }
 
     #[Route('/article/edit/{id}', name: 'edit',requirements: ['id' => '\d+'], defaults: ['id' => '1'])]
-    public function editAction(int $id): Response
+    public function editAction(int $id, EntityManagerInterface $em, Request $request, ArticleRepository $article): Response
     {
-        $this->addFlash('info', "Le message est edit");
-        return $this->render('blog/edit.html.twig');
+        $tire = $article->find($id);
+        $form = $this->createForm(ArticleType::class, $tire);
+        $form->add('send', SubmitType::class, ['label' => 'Valider']);
+        $form->handleRequest($request); // Alimentation du formulaire avec la Request
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Le formulaire vient d'être soumis et il est valide => $tire est hydraté avec les données saisies
+
+            // Traitement des données du formulaire...
+
+            return $this->redirectToRoute('app_blog_list');
+        }
+
+        // Affichage du formulaire initial (requête GET) OU affichage du formulaire avec erreurs après validation (requête POST)
+        return $this->render('blog/forum.html.twig', ['form' => $form->createView()]);
     }
 
     #[Route('/article/delete/{id}', name: 'delete',requirements: ['id' => '\d+'], defaults: ['id' => '1'])]
