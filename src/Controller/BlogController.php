@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Category;
+use App\Entity\Comment;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -20,6 +23,19 @@ class BlogController extends AbstractController
     public function blogAction(): Response
     {
         return $this->render('blog/blog.html.twig');
+    }
+
+    #[Route('/category/{id}', name: 'category')]
+    public function categoryAction(int $id, EntityManagerInterface $em): Response
+    {
+        $Articles = $em->getRepository(Article::class)->findOneByCategory($id);
+        //->pagination($page, $this->getParameter('nb_article'));
+
+        dump($Articles);
+
+        return $this->render('blog/category.html.twig', ['articles' => $Articles]);
+        //return $this->render('blog/list.html.twig');
+        //return new Response('<body></body>');
     }
 
     #[Route('/list/{page}', name: 'list',requirements: ['page' => '\d+'], defaults: ['page' => '1'])]
@@ -40,11 +56,11 @@ class BlogController extends AbstractController
 
         // Ajout comment
         /*$A = new Comment();
-        $A ->setArticle($em->getRepository(Article::class)->find(8))
-            ->setTitle('Avis')
-            ->setAuthor('Moi')
-            ->setCreateAt(new \DateTime('2022-12-12 12:00:00'))
-            ->setMessage('Ceci est un message');
+        $A ->setArticle($em->getRepository(Article::class)->find(12))
+            ->setTitle('Avis sur id 12')
+            ->setAuthor('Autre id')
+            ->setCreateAt(new \DateTime('2022-12-14 12:00:00'))
+            ->setMessage('Ceci est un message (un autre)');
 
         $em -> persist($A);
         $em->flush();*/
@@ -53,10 +69,10 @@ class BlogController extends AbstractController
         $Articles = $em->getRepository(Article::class)//->findBy(['published' => true], ['createAt' => 'desc'])
             ->pagination($page, $this->getParameter('nb_article'));
 
-        dump($Articles);
+        //dump($Articles);
 
-        //return $this->render('blog/list.html.twig', ['article' => $Articles]);
-        return new Response('<body></body>');
+        return $this->render('blog/list.html.twig', ['article' => $Articles]);
+        //return new Response('<body></body>');
 
     }
 
@@ -78,10 +94,10 @@ class BlogController extends AbstractController
     }
 
     #[Route('/article/add', name: 'add')]
-    public function addAction(Request $request): Response
+    public function addAction(Request $request, EntityManagerInterface $em): Response
     {
-        $tire = new Article();
-        $form = $this->createForm(ArticleType::class, $tire);
+        $article = new Article();
+        $form = $this->createForm(ArticleType::class, $article);
         $form->add('send', SubmitType::class, ['label' => 'Nouveau article']);
         $form->handleRequest($request); // Alimentation du formulaire avec la Request
 
@@ -107,8 +123,8 @@ class BlogController extends AbstractController
     #[Route('/article/edit/{id}', name: 'edit',requirements: ['id' => '\d+'], defaults: ['id' => '1'])]
     public function editAction(int $id, EntityManagerInterface $em, Request $request, ArticleRepository $article): Response
     {
-        $tire = $article->find($id);
-        $form = $this->createForm(ArticleType::class, $tire);
+        $article_ = $article->find($id);
+        $form = $this->createForm(ArticleType::class, $article_);
         $form->add('send', SubmitType::class, ['label' => 'Valider']);
         $form->handleRequest($request); // Alimentation du formulaire avec la Request
 

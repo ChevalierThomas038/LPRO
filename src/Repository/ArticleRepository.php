@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Article;
+use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,12 +48,25 @@ class ArticleRepository extends ServiceEntityRepository
             ->addOrderBy('article.createAt', 'DESC')
             ->leftJoin('article.comments', 'comment')
             ->addSelect('comment')
+            ->leftJoin('article.category', 'category')
+            ->addSelect('category')
             ->getQuery()
             ->setFirstResult(($currentPage - 1) * $nbPerPage) // Premier élément de la page
             ->setMaxResults($nbPerPage); // Nombre d'éléments par page
 
         // Equivalent de getResult() mais un count() sur cet objet retourne le nombre de résultats hors pagination
         return new Paginator($query);
+    }
+
+    public function findOneByCategory(int $id)
+    {
+        return $this->createQueryBuilder('article')
+            ->where('category=:category')->setParameter('category', $id)
+            ->leftJoin('article.category', 'category')
+            ->addSelect('category')
+            ->leftJoin('article.comments', 'comment')
+            ->addSelect('comment')
+            ->getQuery()->getResult();
     }
 
 //    /**

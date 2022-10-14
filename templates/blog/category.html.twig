@@ -5,10 +5,10 @@
         <p>{{ msg }}</p></br>
     {% endfor %}
 
-    {% if(article|length > 0) %}
+    {% if(articles|length > 0) %}
+        <a>Test</a>
         <ul>
-            {% for article in article %}
-
+            {% for article in articles %}
                 </br><a>Categories disponibles : </a>
                 {% for category in article.category %}
                     <a href="{{ url('app_blog_category', {'id': category.id}) }}">{{ category.name }}</a>
@@ -28,18 +28,10 @@
                         <br>
                         <a>{{ comment.author }} / {{ comment.title }} : {{ comment.message }}</a>
                     {% endfor %}
-                </br></br>
+                    </br></br>
                 </li>
             {% endfor %}
         </ul>
-    {% endif %}
-
-    {% if(article.count > 5) %}
-        {% set nbPage = article.count/5 %}
-            {% for i in 0..nbPage %}
-                <a href="{{ url('app_blog_list', {'page': (i+1)}) }}">{{ i+1 }}</a>
-            {% endfor %}
-        </br>
     {% endif %}
 
 {% endblock %}

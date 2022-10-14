@@ -40,9 +40,13 @@ class Article
     #[ORM\OneToMany(mappedBy: 'Article', targetEntity: Comment::class)]
     private Collection $comments;
 
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'articles')]
+    private Collection $category;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->category = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -160,6 +164,30 @@ class Article
                 $comment->setArticle(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategory(): Collection
+    {
+        return $this->category;
+    }
+
+    public function addCategory(Category $category): self
+    {
+        if (!$this->category->contains($category)) {
+            $this->category->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): self
+    {
+        $this->category->removeElement($category);
 
         return $this;
     }
