@@ -80,10 +80,14 @@ class BlogController extends AbstractController
     public function viewAction(int $id,  EntityManagerInterface $em): Response
     {
         $Articles = $em->getRepository(Article::class)->find($id);
+        $Articles->setNbViews($Articles->getNbViews()+1);
         /*
         $tabId = ['id' => $id, 'contenue' => 'Ceci est un texte assez
         long avec lequel nous allons tester notre
         filtre'];*/
+
+        $em->persist($Articles);
+        $em->flush();
 
         if (!$Articles->isPublished())
         {
@@ -97,20 +101,27 @@ class BlogController extends AbstractController
     public function addAction(Request $request, EntityManagerInterface $em): Response
     {
         $article = new Article();
+        $article->setNbViews(1);
+        $article->setCreateAt(new \DateTimeImmutable());
+        $article->setUpdateAt(new \DateTimeImmutable());
         $form = $this->createForm(ArticleType::class, $article);
         $form->add('send', SubmitType::class, ['label' => 'Nouveau article']);
         $form->handleRequest($request); // Alimentation du formulaire avec la Request
+
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Le formulaire vient d'être soumis et il est valide => $tire est hydraté avec les données saisies
 
             // Traitement des données du formulaire...
 
+            $em->persist($article);
+            $em->flush();
+
             return $this->redirectToRoute('app_blog_list');
         }
 
         // Affichage du formulaire initial (requête GET) OU affichage du formulaire avec erreurs après validation (requête POST)
-        return $this->render('blog/forum.html.twig', ['form' => $form->createView()]);
+        return $this->render('blog/add.html.twig', ['form' => $form->createView()]);
 
         /*
         if(true) {
@@ -125,6 +136,7 @@ class BlogController extends AbstractController
     {
         $article_ = $article->find($id);
         $form = $this->createForm(ArticleType::class, $article_);
+        $article_->setUpdateAt(new \DateTimeImmutable());
         $form->add('send', SubmitType::class, ['label' => 'Valider']);
         $form->handleRequest($request); // Alimentation du formulaire avec la Request
 
@@ -132,12 +144,14 @@ class BlogController extends AbstractController
             // Le formulaire vient d'être soumis et il est valide => $tire est hydraté avec les données saisies
 
             // Traitement des données du formulaire...
+            $em->persist($article_);
+            $em->flush();
 
             return $this->redirectToRoute('app_blog_list');
         }
 
         // Affichage du formulaire initial (requête GET) OU affichage du formulaire avec erreurs après validation (requête POST)
-        return $this->render('blog/forum.html.twig', ['form' => $form->createView()]);
+        return $this->render('blog/edit.html.twig', ['form' => $form->createView()]);
     }
 
     #[Route('/article/delete/{id}', name: 'delete',requirements: ['id' => '\d+'], defaults: ['id' => '1'])]
@@ -157,13 +171,17 @@ class BlogController extends AbstractController
         return $this->redirectToRoute('app_blog_list');
     }
 
-    public function leftMenu(): Response
+    public function leftMenu(EntityManagerInterface $em): Response
     {
-        $lastArticles = [];
+        $Articles = $em->getRepository(Article::class)//->findBy(['published' => true], ['createAt' => 'desc'])
+        ->pagination(1, $this->getParameter('nb_article'));
 
-        for($i=1 ; $i < 5; $i++) {
-            $lastArticles[] = ['article' => $i];
-        }
-        return $this->render('blog/last_articles.html.twig', ['article' => $lastArticles]);
+        return $this->render('blog/last_articles.html.twig', ['article' => $Articles]);
+    }
+
+    #[Route('/testSpam/{text}')]
+    public function testSpam(string $text): Response
+    {
+
     }
 }

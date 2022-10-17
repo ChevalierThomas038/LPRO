@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
@@ -17,6 +18,7 @@ class Article
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotEqualTo(propertyPath:'content', message: "Titre et le contenu sont pareillent")]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
@@ -32,6 +34,7 @@ class Article
     private ?string $author = null;
 
     #[ORM\Column]
+    #[Assert\GreaterThanOrEqual(0, message: "Valeur non valide")]
     private ?int $nbViews = null;
 
     #[ORM\Column]

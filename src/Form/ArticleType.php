@@ -24,8 +24,8 @@ class ArticleType extends AbstractType
         $builder
             ->add('title',TextType::class, ['required' => true])
             ->add('content',TextType::class)
-            ->add('createAt',DateTimeType::class)
-            ->add('updateAt',DateTimeType::class)
+            //->add('createAt',DateTimeType::class)
+            //->add('updateAt',DateTimeType::class)
             ->add('author',TextType::class)
             ->add('nbViews',IntegerType::class, ['required' => true])
             ->add('published')
