@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
+use http\Client\Request;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class SpamFinder
 {
-    private $logger;
-    protected $requestStack;
+    private LoggerInterface $logger;
+    protected RequestStack $requestStack;
 
     public function __construct(LoggerInterface $logger, RequestStack $requestStack)
     {
@@ -16,19 +19,16 @@ class SpamFinder
         $this->requestStack = $requestStack;
     }
 
-    public function isSpam(string $text): bool
+    public function send(string $text): bool
     {
         $spam = array("aaaa","sdfsdf");
 
-        for ($i = 0; $i < $spam.count(); $i++)
+        foreach ($spam as $text)
         {
-            if ($text == $spam($i))
-            {
-                return true;
-                $request = $this->requestStack->getCurrentRequest();
-                $text = $text . $request.getClientIp();
-                $this->logger->info($text);
-            }
+            $request = $this->requestStack->getCurrentRequest();
+            $text = $text . $request->getClientIp();
+            $this->logger->info($text);
+            return true;
         }
 
         return false;

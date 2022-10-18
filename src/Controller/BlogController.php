@@ -178,10 +178,4 @@ class BlogController extends AbstractController
 
         return $this->render('blog/last_articles.html.twig', ['article' => $Articles]);
     }
-
-    #[Route('/testSpam/{text}')]
-    public function testSpam(string $text): Response
-    {
-
-    }
 }
