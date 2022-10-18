@@ -9,8 +9,8 @@
         {% block h1 %}<h1>Mon site default</h1>{% endblock %}
 
         {% block menu %}
-                <li><a href="https://www.google.com">lien 1 </a></li>
-                <li><a href="https://www.google.com">lien 2 </a></li>
+                <li><a href="{{ path('app_blog_list') }}">List des articles</a></li>
+                <li><a href="{{ path('app_blog_index') }}">Blog</a></li>
         {% endblock %}
 
         {% block content %}
