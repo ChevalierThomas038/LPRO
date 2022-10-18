@@ -4,33 +4,30 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use http\Client\Request;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class SpamFinder
 {
     private LoggerInterface $logger;
-    protected RequestStack $requestStack;
+    protected String $ip;
+    private array $textSpam;
 
-    public function __construct(LoggerInterface $logger, RequestStack $requestStack)
+
+    public function __construct(array $textSpam, LoggerInterface $logger, RequestStack $requestStack)
     {
+        $this->textSpam= $textSpam;
         $this->logger = $logger;
-        $this->requestStack = $requestStack;
+        $this->ip = $requestStack->getCurrentRequest()->getClientIp();
     }
 
-    public function send(string $text): bool
+    public function isSpam(string $text)
     {
-        $spam = array("aaaa","sdfsdf");
-
-        foreach ($spam as $text)
+        if (array_search($text, $this->textSpam))
         {
-            $request = $this->requestStack->getCurrentRequest();
-            $text = $text . $request->getClientIp();
-            $this->logger->info($text);
+            $this->logger->info('error : message, ip : '.$this->ip);
             return true;
         }
-
         return false;
     }
 }

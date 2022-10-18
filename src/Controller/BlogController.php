@@ -8,7 +8,9 @@ use App\Entity\Comment;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
+use App\Service\SpamFinder;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Response;
@@ -98,6 +100,7 @@ class BlogController extends AbstractController
     }
 
     #[Route('/article/add', name: 'add')]
+    #[IsGranted('ROLE_ADMIN')]
     public function addAction(Request $request, EntityManagerInterface $em): Response
     {
         $article = new Article();
@@ -132,7 +135,8 @@ class BlogController extends AbstractController
     }
 
     #[Route('/article/edit/{id}', name: 'edit',requirements: ['id' => '\d+'], defaults: ['id' => '1'])]
-    public function editAction(int $id, EntityManagerInterface $em, Request $request, ArticleRepository $article): Response
+    #[IsGranted('ROLE_ADMIN')]
+    public function editAction(int $id, EntityManagerInterface $em, Request $request, ArticleRepository $article, SpamFinder $spam): Response
     {
         $article_ = $article->find($id);
         $form = $this->createForm(ArticleType::class, $article_);
@@ -141,6 +145,10 @@ class BlogController extends AbstractController
         $form->handleRequest($request); // Alimentation du formulaire avec la Request
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if($spam->isSpam($article_->getContent())){
+                return $this->render('blog/list.html.twig');
+            }
+
             // Le formulaire vient d'être soumis et il est valide => $tire est hydraté avec les données saisies
 
             // Traitement des données du formulaire...
@@ -155,6 +163,7 @@ class BlogController extends AbstractController
     }
 
     #[Route('/article/delete/{id}', name: 'delete',requirements: ['id' => '\d+'], defaults: ['id' => '1'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteAction(int $id, EntityManagerInterface $em): Response
     {
         $Articles = $em->getRepository(Article::class)->find($id);
