@@ -9,8 +9,8 @@
     {% endfor %}
 
 
-    <a>nb vue : {{ article.nbViews }} </br> {{ article.content }}</a></br>
-    <button type="button" onclick="location.href = '{{ url('app_blog_delete', {'id': article.id}) }}';">Supprimer</button>
-    <button type="button" onclick="location.href = '{{ url('app_blog_edit', {'id': article.id}) }}';">Modifier</button>
+    <a>{% trans %}Nombre de vue{% endtrans %} : {{ article.nbViews }} </br> {{ article.content }}</a></br>
+    <button type="button" onclick="location.href = '{{ url('app_blog_delete', {'id': article.id}) }}';">{% trans %}Supprimer{% endtrans %}</button>
+    <button type="button" onclick="location.href = '{{ url('app_blog_edit', {'id': article.id}) }}';">{% trans %}Modifier{% endtrans %}</button>
     </br>
 {% endblock %}

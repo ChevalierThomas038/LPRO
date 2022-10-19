@@ -6,11 +6,13 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
-        {% block h1 %}<h1>Mon site default</h1>{% endblock %}
+        {% block h1 %}{% trans %} <h1>Mon site default</h1>{% endtrans %}{% endblock %}
 
         {% block menu %}
-                <li><a href="{{ path('app_blog_list') }}">List des articles</a></li>
-                <li><a href="{{ path('app_blog_index') }}">Blog</a></li>
+                <li><a href="{{ path('app_blog_list') }}">{% trans %}List des articles{% endtrans %}</a></li>
+                <li><a href="{{ path('app_blog_index') }}">{% trans %}Blog{% endtrans %}</a></li>
+                <li><a href="{{ url('app_blog_change_locale', {'lang' : 'en', 'route': 'app_blog_index'}) }}" > en </a></li>
+                <li><a href="{{ url('app_blog_change_locale', {'lang' : 'fr', 'route': 'app_blog_index'}) }}" > fr </a></li>
         {% endblock %}
 
         {% block content %}

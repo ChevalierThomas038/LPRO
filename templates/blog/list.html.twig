@@ -2,26 +2,23 @@
 {% block content_blog %}
 
     {% for msg in app.session.flashBag.get('info') %}
-        <p>{{ msg }}</p></br>
+        <p>{{ msg|trans }}</p></br>
     {% endfor %}
 
     {% if(article|length > 0) %}
         <ul>
             {% for article in article %}
 
-                </br><a>Categories disponibles : </a>
-                {% for category in article.category %}
-                    <a href="{{ url('app_blog_category', {'id': category.id}) }}">{{ category.name }}</a>
-                {% endfor %}
-
                 {% set id = article.id %}
                 <li><a href="{{ url('app_blog_article', {'id': id}) }}">{{ article.title }} </a> : {{ article.content | truncate(20)}}
 
-                    </br><a>Categories : </a>
+                    </br><a>{% trans %}Categories{% endtrans %} : </a>
                     {% for category in article.category %}
                         <br>
                         <a>{{ category.name }}</a>
                     {% endfor %}
+
+                    <a></br>{% trans %}Auteur{% endtrans %} : {{ article.author }}</a>
 
                     </br><a>Message : </a>
                     {% for comment in article.comments %}

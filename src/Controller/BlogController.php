@@ -4,10 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Category;
-use App\Entity\Comment;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
-use App\Repository\CategoryRepository;
 use App\Service\SpamFinder;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -18,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/blog', name: 'app_blog_')]
+#[Route('/{_locale}/blog', name: 'app_blog_', defaults: ['_locale' => 'fr'])]
 class BlogController extends AbstractController
 {
     #[Route('/', name: 'index')]
@@ -155,6 +153,7 @@ class BlogController extends AbstractController
             $em->persist($article_);
             $em->flush();
 
+            $this->addFlash('info', "L'article est modifier");
             return $this->redirectToRoute('app_blog_list');
         }
 
@@ -185,6 +184,14 @@ class BlogController extends AbstractController
         $Articles = $em->getRepository(Article::class)//->findBy(['published' => true], ['createAt' => 'desc'])
         ->pagination(1, $this->getParameter('nb_article'));
 
-        return $this->render('blog/last_articles.html.twig', ['article' => $Articles]);
+        $Categories = $em->getRepository(Category::class)->findAll();
+
+        return $this->render('blog/last_articles.html.twig', ['article' => $Articles , 'categories' => $Categories]);
+    }
+
+    #[Route('/change/locale/{lang}/{route}', name: 'change_locale')]
+    public function changeLocalLang(string $lang, string $route)
+    {
+        return $this->redirectToRoute($route, ['_locale'=> $lang]);
     }
 }

@@ -28,5 +28,13 @@ services:
                 2: 'sdfsdf'
             - '@logger'
             - '@request_stack'
+
+    App\Service\DetectView:
+        # Utiliser le tag doctrine.event_listener ainsi que l'event
+        # Doctrine concerné (postPersist ici)
+        tags:
+            - { name: doctrine.event_listener, event: PostUpdate }
+
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

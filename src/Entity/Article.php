@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
 {
@@ -45,6 +46,15 @@ class Article
 
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'articles')]
     private Collection $category;
+
+    #[ORM\PrePersist]
+    public function anonymous()
+    {
+        if(is_null($this->author)) {
+            // Uniquement si la description n'est pas renseignée, en définir une
+            $this->author = "anonymous";
+        }
+    }
 
     public function __construct()
     {

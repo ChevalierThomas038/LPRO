@@ -1,5 +1,10 @@
 {% if(article|length > 0) %}
     <ul>
+        <a>{% trans %}Categories disponibles{% endtrans %} : </a>
+        {% for categories in categories %}
+            <li></li><a href="{{ url('app_blog_category', {'id': categories.id}) }}">{{ categories.name }}</a></li>
+        {% endfor %}
+
         {% for article in article %}
             <li><a href="{{ url('app_blog_article', {'id': article.id}) }}">{{ article.title }} </a></li>
         {% endfor %}
