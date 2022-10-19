@@ -194,4 +194,20 @@ class BlogController extends AbstractController
     {
         return $this->redirectToRoute($route, ['_locale'=> $lang]);
     }
+
+    #[Route('/test-slug/{titre}/{contenu}/{autheur}/{publier}')]
+    public function testSlugAction(EntityManagerInterface $em, string $titre, string $contenu, string $autheur, bool $publier): Response
+    {
+        $model = new Article();
+        $model->setTitle($titre)
+            ->setContent($contenu)
+            ->setUpdateAt(new \DateTimeImmutable())
+            ->setCreateAt(new \DateTimeImmutable())
+            ->setNbViews(1)
+            ->setAuthor($autheur)
+            ->setPublished($publier);
+        $em->persist($model);
+        $em->flush();
+        return $this->redirectToRoute('app_blog_list');
+    }
 }

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
@@ -46,6 +47,10 @@ class Article
 
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'articles')]
     private Collection $category;
+
+    #[ORM\Column(length: 255, unique: true, nullable: true)]
+    #[Gedmo\Slug(fields:['title'])]
+    private ?string $slug = null;
 
     #[ORM\PrePersist]
     public function anonymous()
@@ -201,6 +206,18 @@ class Article
     public function removeCategory(Category $category): self
     {
         $this->category->removeElement($category);
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }
