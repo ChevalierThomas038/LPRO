@@ -19,12 +19,12 @@ class SecurityController extends AbstractController
         $em = $doctrine->getManager();
 
         $user = new User();
-        $user->setUsername('User')
-            ->setName('User')
-            ->setRoles(['ROLE_USER'])
+        $user->setUsername('Admin2')
+            ->setName('Admin2')
+            ->setRoles(['ROLE_ADMIN'])
             ->setBirthday(new \DateTime('2002-01-21'));
 
-        $hashedPassword = $passwordHasher->hashPassword($user, 'User');
+        $hashedPassword = $passwordHasher->hashPassword($user, 'Admin2');
         $user->setPassword($hashedPassword);
         $em->persist($user);
         $em->flush();

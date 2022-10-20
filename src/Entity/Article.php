@@ -52,8 +52,8 @@ class Article
     #[Gedmo\Slug(fields:['title'])]
     private ?string $slug = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'articles')]
-    private Collection $auteur;
+    #[ORM\ManyToOne(inversedBy: 'articles')]
+    private ?User $user = null;
 
     #[ORM\PrePersist]
     public function anonymous()
@@ -68,7 +68,6 @@ class Article
     {
         $this->comments = new ArrayCollection();
         $this->category = new ArrayCollection();
-        $this->auteur = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -226,33 +225,14 @@ class Article
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getAuteur(): Collection
+    public function getUser(): ?User
     {
-        return $this->auteur;
+        return $this->user;
     }
 
-    public function setAuteur(?User $user): self
+    public function setUser(?User $user): self
     {
-        $this->auteur = $user;
-
-        return $this;
-    }
-
-    public function addAuteur(User $auteur): self
-    {
-        if (!$this->auteur->contains($auteur)) {
-            $this->auteur->add($auteur);
-        }
-
-        return $this;
-    }
-
-    public function removeAuteur(User $auteur): self
-    {
-        $this->auteur->removeElement($auteur);
+        $this->user = $user;
 
         return $this;
     }

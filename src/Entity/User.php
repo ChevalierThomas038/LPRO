@@ -36,11 +36,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $birthday = null;
 
-    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'auteur')]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Article::class)]
     private Collection $articles;
+
 
     public function __construct()
     {
+        $this->user = new ArrayCollection();
         $this->articles = new ArrayCollection();
     }
 
@@ -150,7 +152,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->articles->contains($article)) {
             $this->articles->add($article);
-            $article->addAuteur($this);
+            $article->setUser($this);
         }
 
         return $this;
@@ -159,7 +161,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeArticle(Article $article): self
     {
         if ($this->articles->removeElement($article)) {
-            $article->removeAuteur($this);
+            // set the owning side to null (unless already changed)
+            if ($article->getUser() === $this) {
+                $article->setUser(null);
+            }
         }
 
         return $this;

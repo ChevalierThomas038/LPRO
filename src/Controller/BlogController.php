@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 #[Route('/{_locale}/blog', name: 'app_blog_', defaults: ['_locale' => 'fr'])]
 class BlogController extends AbstractController
@@ -139,16 +140,23 @@ class BlogController extends AbstractController
 
     #[Route('/article/edit/{id}', name: 'edit',requirements: ['id' => '\d+'], defaults: ['id' => '1'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function editAction(int $id, EntityManagerInterface $em, Request $request, ArticleRepository $article, SpamFinder $spam): Response
+    public function editAction(Security $security, int $id, EntityManagerInterface $em, Request $request, ArticleRepository $article, SpamFinder $spam): Response
     {
-        $article_ = $article->find($id);
-        $form = $this->createForm(ArticleType::class, $article_);
-        $article_->setUpdateAt(new \DateTimeImmutable());
+        //$article_ = $article->find($id);
+        $article =$em->getRepository(Article::class)->find($id);
+        $form = $this->createForm(ArticleType::class, $article);
+        $article->setUpdateAt(new \DateTimeImmutable());
         $form->add('send', SubmitType::class, ['label' => 'Valider']);
         $form->handleRequest($request); // Alimentation du formulaire avec la Request
 
+        if (!$article || !$security->isGranted('edit', $article)) {
+            dump($security->isGranted('edit', $form));
+            dump(!$article);
+            throw new NotFoundHttpException("Vous n'avez pas le droit d'éditer cette article !");
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
-            if($spam->isSpam($article_->getContent())){
+            if($spam->isSpam($article->getContent())){
                 //return $this->render('blog/blog.html.twig');
                 return  new Response('<body></body>');
             }
@@ -156,7 +164,7 @@ class BlogController extends AbstractController
             // Le formulaire vient d'être soumis et il est valide => $tire est hydraté avec les données saisies
 
             // Traitement des données du formulaire...
-            $em->persist($article_);
+            $em->persist($article);
             $em->flush();
 
             $this->addFlash('info', "L'article est modifier");
@@ -200,24 +208,6 @@ class BlogController extends AbstractController
     {
         return $this->redirectToRoute($route, ['_locale'=> $lang]);
     }
-
-    /*
-    #[Route('/test-slug/{titre}/{contenu}/{autheur}/{publier}')]
-    public function testSlugAction(EntityManagerInterface $em, string $titre, string $contenu, string $autheur, bool $publier): Response
-    {
-        $model = new Article();
-        $model->setTitle($titre)
-            ->setContent($contenu)
-            ->setUpdateAt(new \DateTimeImmutable())
-            ->setCreateAt(new \DateTimeImmutable())
-            ->setNbViews(1)
-            ->setAuthor($autheur)
-            ->setPublished($publier);
-        $em->persist($model);
-        $em->flush();
-        return $this->redirectToRoute('app_blog_list');
-    }
-    */
 
     #[Route('/test-slug/{titre}')]
     public function viewSlugAction(EntityManagerInterface $em, string $titre): Response
