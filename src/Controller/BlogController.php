@@ -224,6 +224,16 @@ class BlogController extends AbstractController
     {
         $article = $em->getRepository(Article::class)->findOneBy(['title' => $titre]);
 
+        if (!$article)
+        {
+            throw new NotFoundHttpException("Article non existant");
+        }
+
+        $article->setNbViews($article->getNbViews()+1);
+
+        $em->persist($article);
+        $em->flush();
+
         return $this->render('blog/view.html.twig', ['article' => $article]);
     }
 }
