@@ -19,7 +19,7 @@ class ServiceMail
     {
         $email = (new Email())
             ->subject("L'article : {$article->getTitle()}")
-            ->text("Il a été vu {$article->getNbViews()}.")
+            ->text("Il a été vu {$article->getNbViews()}. Contenu {$article->getContent()}")
             ->addTo('admin@monsite.com') // TODO : passer par une variable !
             ->addFrom('no-reply@monsite.com'); // TODO : passer par une variable !
 

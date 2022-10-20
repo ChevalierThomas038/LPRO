@@ -99,7 +99,7 @@ class BlogController extends AbstractController
 
     #[Route('/article/add', name: 'add')]
     #[IsGranted('ROLE_ADMIN')]
-    public function addAction(Request $request, EntityManagerInterface $em): Response
+    public function addAction(Request $request, EntityManagerInterface $em, SpamFinder $spam): Response
     {
         $article = new Article();
         $article->setNbViews(1);
@@ -111,6 +111,11 @@ class BlogController extends AbstractController
 
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if($spam->isSpam($article->getContent())){
+                //return $this->render('blog/blog.html.twig');
+                return  new Response('<body></body>');
+            }
             // Le formulaire vient d'être soumis et il est valide => $tire est hydraté avec les données saisies
 
             // Traitement des données du formulaire...
@@ -144,7 +149,8 @@ class BlogController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if($spam->isSpam($article_->getContent())){
-                return $this->render('blog/list.html.twig');
+                //return $this->render('blog/blog.html.twig');
+                return  new Response('<body></body>');
             }
 
             // Le formulaire vient d'être soumis et il est valide => $tire est hydraté avec les données saisies
@@ -195,6 +201,7 @@ class BlogController extends AbstractController
         return $this->redirectToRoute($route, ['_locale'=> $lang]);
     }
 
+    /*
     #[Route('/test-slug/{titre}/{contenu}/{autheur}/{publier}')]
     public function testSlugAction(EntityManagerInterface $em, string $titre, string $contenu, string $autheur, bool $publier): Response
     {
@@ -209,5 +216,14 @@ class BlogController extends AbstractController
         $em->persist($model);
         $em->flush();
         return $this->redirectToRoute('app_blog_list');
+    }
+    */
+
+    #[Route('/test-slug/{titre}')]
+    public function viewSlugAction(EntityManagerInterface $em, string $titre): Response
+    {
+        $article = $em->getRepository(Article::class)->findOneBy(['title' => $titre]);
+
+        return $this->render('blog/view.html.twig', ['article' => $article]);
     }
 }

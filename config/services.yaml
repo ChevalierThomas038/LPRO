@@ -33,7 +33,7 @@ services:
         # Utiliser le tag doctrine.event_listener ainsi que l'event
         # Doctrine concerné (postPersist ici)
         tags:
-            - { name: doctrine.event_listener, event: PostUpdate }
+            - { name: doctrine.event_listener, event: postUpdate }
 
 
     # add more service definitions when explicit configuration is needed

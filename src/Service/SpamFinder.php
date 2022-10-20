@@ -25,7 +25,7 @@ class SpamFinder
     {
         if (array_search($text, $this->textSpam))
         {
-            $this->logger->info('error : message, ip : '.$this->ip);
+            $this->logger->info('error : contenu non viable, ip : '.$this->ip);
             return true;
         }
         return false;
