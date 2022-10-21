@@ -78,9 +78,14 @@ class BlogController extends AbstractController
     }
 
     #[Route('/article/{id}', name: 'article',requirements: ['id' => '\d+'])]
-    public function viewAction(int $id,  EntityManagerInterface $em): Response
+    public function viewAction(Security $security,int $id,  EntityManagerInterface $em): Response
     {
         $Articles = $em->getRepository(Article::class)->find($id);
+
+        if (!$Articles || !$security->isGranted('view', $Articles)) {
+            throw new NotFoundHttpException('Article inconnu');
+        }
+        
         $Articles->setNbViews($Articles->getNbViews()+1);
         /*
         $tabId = ['id' => $id, 'contenue' => 'Ceci est un texte assez
@@ -90,10 +95,12 @@ class BlogController extends AbstractController
         $em->persist($Articles);
         $em->flush();
 
-        if (!$Articles->isPublished())
+        /*if (!$Articles->isPublished())
         {
             throw new NotFoundHttpException();
-        }
+        }*/
+
+
 
         return $this->render('blog/view.html.twig', ['article' => $Articles]);
     }
@@ -150,8 +157,6 @@ class BlogController extends AbstractController
         $form->handleRequest($request); // Alimentation du formulaire avec la Request
 
         if (!$article || !$security->isGranted('edit', $article)) {
-            dump($security->isGranted('edit', $form));
-            dump(!$article);
             throw new NotFoundHttpException("Vous n'avez pas le droit d'éditer cette article !");
         }
 

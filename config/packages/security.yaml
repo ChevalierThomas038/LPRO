@@ -42,7 +42,8 @@ security:
          #- { path: ^/profile, roles: ROLE_USER }
         #- { path: ^/, roles: PUBLIC_ACCESS } # la page d’accueil est publique
         - { path: ^/login, roles: PUBLIC_ACCESS } # la page de login aussi (par d´efinition)
-        - { path: ^/, roles: ROLE_USER } # toutes les autres pages n´ecessitent d’^etre authentifi´
+        - { path: ^/blog, roles: ROLE_USER } # toutes les autres pages n´ecessitent d’^etre authentifi´
+        - { path: ^/accueil, roles: PUBLIC_ACCESS}
 
 when@test:
     security:
