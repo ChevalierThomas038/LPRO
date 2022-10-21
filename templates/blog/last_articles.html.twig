@@ -4,6 +4,10 @@
             <div class="mb-3">
                 {% trans %}You are logged in as {% endtrans %}{{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">{% trans %}Logout{% endtrans %}</a>
             </div>
+        {% else %}
+            <div class="mb-3">
+                <a href="{{ path('app_login') }}">{% trans %}Connexion{% endtrans %}</a>
+            </div>
         {% endif %}
 
         <a>{% trans %}Categories disponibles{% endtrans %} : </a>

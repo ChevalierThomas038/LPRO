@@ -85,7 +85,7 @@ class BlogController extends AbstractController
         if (!$Articles || !$security->isGranted('view', $Articles)) {
             throw new NotFoundHttpException('Article inconnu');
         }
-        
+
         $Articles->setNbViews($Articles->getNbViews()+1);
         /*
         $tabId = ['id' => $id, 'contenue' => 'Ceci est un texte assez
