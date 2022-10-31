@@ -8,14 +8,18 @@
 
         {% block menu %}
             <menu>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item active">
+                    <a class="nav-link active" href="{{ path('app_blog_add') }}" >{% trans %}Ajouter un article{% endtrans %}</a>
+                </li>
                 {{ parent() }}
-                <li><a  href="{{ path('app_blog_add') }}" >{% trans %}Ajouter un article{% endtrans %}</a></li>
+            </ul>
             </menu>
         {% endblock %}
         {% block content %}
-
-            {% block content_blog %} {% endblock %}
             <a>{% trans %} une phrase d’accroche de notre blog qui sera toujours affichée au sein du blog {% endtrans %}</a>
+            <br>
+            {% block content_blog %} {% endblock %}
         {% endblock %}
 
 {% endblock %}

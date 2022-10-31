@@ -6,31 +6,43 @@
     {% endfor %}
 
     {% if(articles|length > 0) %}
-        <ul>
-            {% for article in articles %}
-                </br><a>Categories disponibles : </a>
-                {% for category in article.category %}
-                    <a href="{{ url('app_blog_category', {'id': category.id}) }}">{{ category.name }}</a>
-                {% endfor %}
-
-                {% set id = article.id %}
-                <li><a href="{{ url('app_blog_article', {'id': id}) }}">{{ article.title }} </a> : {{ article.content | truncate(20)}}
-
-                    </br><a>Categories : </a>
-                    {% for category in article.category %}
-                        <br>
-                        <a>{{ category.name }}</a>
-                    {% endfor %}
-
-                    </br><a>Message : </a>
-                    {% for comment in article.comments %}
-                        <br>
-                        <a>{{ comment.author }} / {{ comment.title }} : {{ comment.message }}</a>
-                    {% endfor %}
-                    </br></br>
-                </li>
-            {% endfor %}
-        </ul>
+        <main class="my-5">
+            <div class="container">
+                <section class="text-center">
+                    <div class="row">
+                        {% for articles in articles %}
+                            {% set id = articles.id %}        
+                            <div class="col-lg-4 col-md-12 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><a href="{{ url('app_blog_article', {'id': id}) }}">{{ articles.title }} </a></h5>
+                                        <p class="card-text">
+                                            {{ articles.content | truncate(30)}}
+                                        </p>
+                                        <p class="card-text">
+                                            <a>{% trans %}Categories{% endtrans %} : </a>
+                                            {% for category in articles.category %}
+                                                <a>{{ category.name }}</a>
+                                            {% endfor %}
+                                        </p>
+                                        <p class="card-text">
+                                            <a></br>{% trans %}Auteur{% endtrans %} : {{ articles.author }}</a>
+                                        </p>
+                                        <p class=""card-text">
+                                            <a>Message : </a>
+                                            {% for comment in articles.comments %}
+                                                <a>{{ comment.author }} / {{ comment.title }} : {{ comment.message }}<br></a>
+                                            {% endfor %}
+                                        </p>
+                                        <a href="{{ url('app_blog_article', {'id': id}) }}" class="btn btn-primary">{% trans %}Lire{% endtrans %}</a>
+                                    </div>
+                                </div>
+                            </div>                   
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+        </main>
     {% endif %}
 
 {% endblock %}

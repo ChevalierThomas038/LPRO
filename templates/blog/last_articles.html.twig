@@ -1,22 +1,29 @@
-{% if(article|length > 0) %}
+<nav >
+    {% if(articles|length > 0) %}
+        <div class="w3-sidebar w3-light-grey w3-bar-block" style="width:25%; box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px; position: fixed;">
 
-        {% if app.user %}
-            <div class="mb-3">
-                {% trans %}You are logged in as {% endtrans %}{{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">{% trans %}Logout{% endtrans %}</a>
-            </div>
-        {% else %}
-            <div class="mb-3">
-                <a href="{{ path('app_login') }}">{% trans %}Connexion{% endtrans %}</a>
-            </div>
-        {% endif %}
+            <hr>
 
-        <a>{% trans %}Categories disponibles{% endtrans %} : </a>
-        {% for categories in categories %}
-            <a href="{{ url('app_blog_category', {'id': categories.id}) }}">{{ categories.name }}</a>
-        {% endfor %}
-    <ul>
-        {% for article in article %}
-            <li><a href="{{ url('app_blog_article', {'id': article.id}) }}">{{ article.title }} </a></li>
-        {% endfor %}
-    </ul>
-{% endif %}
+            <div class="w3-dropdown-hover">
+                <button class="w3-button">{% trans %}Categories disponibles{% endtrans %}
+                <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="w3-dropdown-content w3-bar-block">
+                    {% for categories in categories %}
+                        <a class="dropdown-item" href="{{ url('app_blog_category', {'id': categories.id}) }}">{{ categories.name }}</a>
+                    {% endfor %}
+                </div>
+            </div> 
+            
+            <hr>
+            
+            <ul class="nav nav-pills flex-column mb-auto">
+                {% for article in articles %}
+                    <li><a class="w3-bar-item w3-button" href="{{ url('app_blog_article', {'id': article.id}) }}">{{ article.title }}</a></li>
+                {% endfor %}
+            </ul>
+            
+            <hr>
+        </div>
+    {% endif %}
+</nav>

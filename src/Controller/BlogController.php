@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Entity\Category;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
@@ -57,11 +58,11 @@ class BlogController extends AbstractController
 
         // Ajout comment
         /*$A = new Comment();
-        $A ->setArticle($em->getRepository(Article::class)->find(12))
+        $A ->setArticle($em->getRepository(Article::class)->find(47))
             ->setTitle('Avis sur id 12')
-            ->setAuthor('Autre id')
+            ->setAuthor('Auteur')
             ->setCreateAt(new \DateTime('2022-12-14 12:00:00'))
-            ->setMessage('Ceci est un message (un autre)');
+            ->setMessage('Ceci est un message');
 
         $em -> persist($A);
         $em->flush();*/
@@ -72,7 +73,7 @@ class BlogController extends AbstractController
 
         //dump($Articles);
 
-        return $this->render('blog/list.html.twig', ['article' => $Articles]);
+        return $this->render('blog/list.html.twig', ['articles' => $Articles]);
         //return new Response('<body></body>');
 
     }
@@ -205,7 +206,7 @@ class BlogController extends AbstractController
 
         $Categories = $em->getRepository(Category::class)->findAll();
 
-        return $this->render('blog/last_articles.html.twig', ['article' => $Articles , 'categories' => $Categories]);
+        return $this->render('blog/last_articles.html.twig', ['articles' => $Articles , 'categories' => $Categories]);
     }
 
     #[Route('/change/locale/{lang}/{route}', name: 'change_locale')]

@@ -1,42 +1,59 @@
 {% extends 'blog/blog.html.twig' %}
 {% block content_blog %}
-
+    
     {% for msg in app.session.flashBag.get('info') %}
         <p>{{ msg|trans }}</p></br>
     {% endfor %}
 
-    {% if(article|length > 0) %}
-        <ul>
-            {% for article in article %}
-
-                {% set id = article.id %}
-                <li><a href="{{ url('app_blog_article', {'id': id}) }}">{{ article.title }} </a> : {{ article.content | truncate(20)}}
-
-                    </br><a>{% trans %}Categories{% endtrans %} : </a>
-                    {% for category in article.category %}
-                        <br>
-                        <a>{{ category.name }}</a>
-                    {% endfor %}
-
-                    <a></br>{% trans %}Auteur{% endtrans %} : {{ article.author }}</a>
-
-                    </br><a>Message : </a>
-                    {% for comment in article.comments %}
-                        <br>
-                        <a>{{ comment.author }} / {{ comment.title }} : {{ comment.message }}</a>
-                    {% endfor %}
-                </br></br>
-                </li>
-            {% endfor %}
-        </ul>
+    {% if(articles|length > 0) %}
+        <main class="my-5">
+            <div class="container">
+                <section class="text-center">
+                    <div class="row">
+                        {% for article in articles %}
+                            {% set id = article.id %}        
+                            <div class="col-lg-4 col-md-12 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><a href="{{ url('app_blog_article', {'id': id}) }}">{{ article.title }} </a></h5>
+                                        <p class="card-text">
+                                            {{ article.content | truncate(30)}}
+                                        </p>
+                                        <p class="card-text">
+                                            <a>{% trans %}Categories{% endtrans %} : </a>
+                                            {% for category in article.category %}
+                                                <a>{{ category.name }}</a>
+                                            {% endfor %}
+                                        </p>
+                                        <p class="card-text">
+                                            <a></br>{% trans %}Auteur{% endtrans %} : {{ article.author }}</a>
+                                        </p>
+                                        <p class=""card-text">
+                                            <a>Message : </a>
+                                            {% for comment in article.comments %}
+                                                <a>{{ comment.author }} / {{ comment.title }} : {{ comment.message }}<br></a>
+                                            {% endfor %}
+                                        </p>
+                                        <a href="{{ url('app_blog_article', {'id': id}) }}" class="btn btn-primary">{% trans %}Lire{% endtrans %}</a>
+                                    </div>
+                                </div>
+                            </div>                   
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+        </main>
     {% endif %}
 
-    {% if(article.count > 5) %}
-        {% set nbPage = article.count/5 %}
-            {% for i in 0..nbPage %}
-                <a href="{{ url('app_blog_list', {'page': (i+1)}) }}">{{ i+1 }}</a>
-            {% endfor %}
-        </br>
+    {% if(articles.count > nb_article) %}
+        {% set nbPage = articles.count/nb_article %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">       
+                {% for i in 0..nbPage %}
+                    <li class="page-item"><a class="page-link" href="{{ url('app_blog_list', {'page': (i+1)}) }}">{{ i+1 }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
     {% endif %}
 
 {% endblock %}

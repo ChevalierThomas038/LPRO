@@ -3,14 +3,28 @@
 {% block h1 %}<h1>{{ article.title }}</h1>{% endblock %}
 
 {% block content_blog %}
+    <br>
 
     {% for msg in app.session.flashBag.get('info') %}
         <p>{{ msg }}</p></br>
     {% endfor %}
 
-
-    <a>{% trans %}Nombre de vue{% endtrans %} : {{ article.nbViews }} </br> {{ article.content }}</a></br>
-    <button type="button" onclick="location.href = '{{ url('app_blog_delete', {'id': article.id}) }}';">{% trans %}Supprimer{% endtrans %}</button>
-    <button type="button" onclick="location.href = '{{ url('app_blog_edit', {'id': article.id}) }}';">{% trans %}Modifier{% endtrans %}</button>
-    </br>
+    <div class="card text-center">
+        <div class="card-header">
+            <h1>{{ article.title }}</h1>
+        </div>
+        <div class="card-header">
+            <a>{{ article.author }}</a>
+        </div>
+        <div class="card-header">
+            <a>{% trans %}Nombre de vue{% endtrans %} : {{ article.nbViews }}</a>
+        </div>
+        <div class="card-body">
+            <p class="card-text">{{ article.content }}</p> 
+        </div>
+        <div class="card-footer text-muted">
+            <button type="button" class="btn btn-primary" onclick="location.href = '{{ url('app_blog_edit', {'id': article.id}) }}';">{% trans %}Modifier{% endtrans %}</button>
+            <button type="button" class="btn btn-danger" onclick="location.href = '{{ url('app_blog_delete', {'id': article.id}) }}';">{% trans %}Supprimer{% endtrans %}</button>
+        </div>
+    </div>
 {% endblock %}

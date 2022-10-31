@@ -1,13 +1,22 @@
 <body>
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
 {{ form_start(form) }}
 {# Affiche la balise <form>, définit les attributs action et method + si nécessaire l'attribut enctype #}
 
 {{ form_errors(form) }}
 {# Affiche les erreurs globales du formulaire #}
+<br>
+<div>
+    {{ form_label(form.title) }}
+    {# Affiche uniquement le label du champ #}
 
-{{ form_row(form.title) }}
-{# Affiche le champ de manière complète : label + widget (code HTML du champ) + erreurs associées au champ s'il y en a #}
+    {{ form_errors(form.title) }}
+    {# Affiche les erreurs associées au champ s'il y en a #}
 
+    {{ form_widget(form.title) }}
+    {# Affiche le widget (code HTML du champ) #}
+</div>
+<br>
 <div>
     {{ form_label(form.content) }}
     {# Affiche uniquement le label du champ #}
@@ -18,7 +27,37 @@
     {{ form_widget(form.content) }}
     {# Affiche le widget (code HTML du champ) #}
 </div>
+<br>
+<div>
+    {{ form_label(form.author) }}
+    {# Affiche uniquement le label du champ #}
 
+    {{ form_errors(form.author) }}
+    {# Affiche les erreurs associées au champ s'il y en a #}
+
+    {{ form_widget(form.author) }}
+    {# Affiche le widget (code HTML du champ) #}
+</div>
+<br>
+<div>
+    {{ form_label(form.nbViews) }}
+    {# Affiche uniquement le label du champ #}
+
+    {{ form_errors(form.nbViews) }}
+    {# Affiche les erreurs associées au champ s'il y en a #}
+
+    {{ form_widget(form.nbViews) }}
+    {# Affiche le widget (code HTML du champ) #}
+</div>
+<br>
+<div>
+    {{ form_label(form.published) }}
+    {# Affiche uniquement le label du champ #}
+
+    {{ form_widget(form.published) }}
+    {# Affiche le widget (code HTML du champ) #}
+</div>
+<br>
 {{ form_rest(form) }}
 {# Affiche tous les champs non explicitement affichés précédemment #}
 
